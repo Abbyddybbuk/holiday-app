@@ -33,7 +33,8 @@ public class HolidayService {
       detail.setCreatedBy("ABHIJEET");
       detail.setCreatedOn(new Timestamp(date.getTime()));
       detail.setUpdatedBy("ABHIJEET");
-      detail.setUpdatedOn(new Timestamp(date.getTime()));      
+      detail.setUpdatedOn(new Timestamp(date.getTime()));     
+      detail.setHolidayHeader(holidayHeader);
     }
     return this.headerRepository.save(holidayHeader);
   }

@@ -11,12 +11,16 @@ import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAResponseBuilderDefault;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sap.holidayapp.model.HolidayHeader;
 import com.sap.icd.odatav2.spring.config.AbstractODataProcessor;
 import com.sap.icd.odatav2.spring.config.StandardODataJPAProcessor;
 
+@Primary
+@Component
 public class HolidayProcessor extends AbstractODataProcessor {
   @Autowired
   private ODataJPAContext oDataJpaContext;
@@ -33,12 +37,14 @@ public class HolidayProcessor extends AbstractODataProcessor {
   @Override
   public ODataResponse readEntitySet(GetEntitySetUriInfo uriInfo, String contentType)
       throws ODataException {
-    return null;
+    oDataJpaContext.setODataContext(getContext());
+    return super.readEntitySet(uriInfo, contentType);
   }
 
   @Override
   public ODataResponse createEntity(PostUriInfo uriInfo, InputStream content,
       String requestContentType, String contentType) throws ODataException {
+    oDataJpaContext.setODataContext(getContext());
     @SuppressWarnings("unused")
     EdmEntitySet edmEntitySet = uriInfo.getTargetEntitySet();
     Object returnObject = null;
@@ -58,7 +64,7 @@ public class HolidayProcessor extends AbstractODataProcessor {
         break;
     }
 
-    return responseBuilder.build(uriInfo, returnObject, contentType);
+    return responseBuilder.build((PostUriInfo) uriInfo, returnObject, contentType);
   }
 
   public <T> Object getPojo(InputStream content, TypeReference<T> typeReference)

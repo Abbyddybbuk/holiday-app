@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.eclipse.persistence.annotations.UuidGenerator;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -28,11 +29,11 @@ public class HolidayHeader implements Serializable {
    * 
    */
   private static final long serialVersionUID = 4628308265794999918L;
-  
-  @Id
-  @UuidGenerator(name = "id")
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "id")  
-  @Column(name = "HID")
+
+  @Id 
+  @GeneratedValue(generator="system-uuid")
+  @GenericGenerator(name="system-uuid", strategy = "uuid")
+  @Column(name = "HID", length = 36)
   private String hid;
 
   @Column(name = "COMPANY_ID")
@@ -109,7 +110,8 @@ public class HolidayHeader implements Serializable {
   }
 
   public void setCreatedOn(Timestamp createdOn) {
-    this.createdOn = (Timestamp) createdOn.clone();
+    if (createdOn != null)
+      this.createdOn = (Timestamp) createdOn.clone();
   }
 
   public String getUpdatedBy() {
@@ -125,7 +127,8 @@ public class HolidayHeader implements Serializable {
   }
 
   public void setUpdatedOn(Timestamp updatedOn) {
-    this.updatedOn = (Timestamp) updatedOn.clone();
+    if (updatedOn != null)
+      this.updatedOn = (Timestamp) updatedOn.clone();
   }
 
   public List<HolidayDetail> getHolidayDetails() {

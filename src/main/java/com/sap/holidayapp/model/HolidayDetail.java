@@ -4,10 +4,14 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.eclipse.persistence.annotations.UuidGenerator;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -21,29 +25,31 @@ public class HolidayDetail implements Serializable {
    * 
    */
   private static final long serialVersionUID = 8984905366206357217L;
-  
-  @Id
-  @Column(name = "D_ID")
+
+  @Id 
+  @GeneratedValue(generator="system-uuid")
+  @GenericGenerator(name="system-uuid", strategy = "uuid")
+  @Column(name = "D_ID", length = 36)
   private String dId;
-  
+
   @Column(name = "PH_ID")
   private String phId;
-  
+
   @Column(name = "PH_DESCRIPTION")
   private String phDescription;
-  
+
   @Column(name = "YEAR")
   private String year;
-  
+
   @Column(name = "MONTH")
   private String month;
-  
+
   @Column(name = "DATE")
   private String date;
-  
+
   @Column(name = "DAY_WEEK")
   private String dayWeek;
-  
+
   @CreatedBy
   @Column(name = "CREATED_BY")
   private String createdBy;
@@ -58,12 +64,12 @@ public class HolidayDetail implements Serializable {
 
   @LastModifiedDate
   @Column(name = "UPDATED_ON")
-  private Timestamp updatedOn;  
-  
+  private Timestamp updatedOn;
+
   @ManyToOne
   @JoinColumn(name = "HID")
   private HolidayHeader holidayHeader;
-  
+
 
   public String getPhDescription() {
     return phDescription;
@@ -73,11 +79,12 @@ public class HolidayDetail implements Serializable {
     this.phDescription = phDescription;
   }
 
-  public String getdId() {
+
+  public String getDId() {
     return dId;
   }
 
-  public void setdId(String dId) {
+  public void setDId(String dId) {
     this.dId = dId;
   }
 
@@ -134,7 +141,8 @@ public class HolidayDetail implements Serializable {
   }
 
   public void setCreatedOn(Timestamp createdOn) {
-    this.createdOn = (Timestamp) createdOn.clone();
+    if (createdOn != null)
+      this.createdOn = (Timestamp) createdOn.clone();
   }
 
   public String getUpdatedBy() {
@@ -150,7 +158,8 @@ public class HolidayDetail implements Serializable {
   }
 
   public void setUpdatedOn(Timestamp updatedOn) {
-    this.updatedOn = (Timestamp) updatedOn.clone();
+    if (updatedOn != null)
+      this.updatedOn = (Timestamp) updatedOn.clone();
   }
 
   public HolidayHeader getHolidayHeader() {
@@ -159,5 +168,5 @@ public class HolidayDetail implements Serializable {
 
   public void setHolidayHeader(HolidayHeader holidayHeader) {
     this.holidayHeader = holidayHeader;
-  }  
+  }
 }
