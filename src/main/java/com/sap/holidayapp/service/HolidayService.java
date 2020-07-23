@@ -1,24 +1,28 @@
 package com.sap.holidayapp.service;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sap.holidayapp.model.HolidayDetail;
 import com.sap.holidayapp.model.HolidayHeader;
+import com.sap.holidayapp.repository.HolidayDetailRepository;
 import com.sap.holidayapp.repository.HolidayHeaderRepository;
 
 @Service
 public class HolidayService {
 
   private HolidayHeaderRepository headerRepository;
-  
+  private HolidayDetailRepository detailRepository;
   
   @Autowired
-  public HolidayService(HolidayHeaderRepository headerRepository) {
+  public HolidayService(HolidayHeaderRepository headerRepository, HolidayDetailRepository detailRepository) {
     super();
     this.headerRepository = headerRepository;
+    this.detailRepository = detailRepository;
   }
 
   public HolidayHeader createHolidayData(HolidayHeader holidayHeader,

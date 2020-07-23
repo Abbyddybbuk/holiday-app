@@ -5,9 +5,8 @@
         <class>com.sap.holidayapp.model.HolidayDetail</class>
 
 		<properties>
-			<property name="eclipselink.weaving" value="static" />
-			<property name="eclipselink.jpql.parser"
-				value="org.eclipse.persistence.queries.ANTLRQueryBuilder" />
+			<property name="eclipselink.ddl-generation" value="create-tables" />
+            <property name="eclipselink.weaving" value="false" />
 		</properties>	
 	</persistence-unit>
 </persistence>

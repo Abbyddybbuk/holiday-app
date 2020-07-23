@@ -2,6 +2,9 @@ package com.sap.holidayapp.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.odata2.api.edm.EdmEntitySet;
 import org.apache.olingo.odata2.api.exception.ODataException;
@@ -9,36 +12,68 @@ import org.apache.olingo.odata2.api.processor.ODataResponse;
 import org.apache.olingo.odata2.api.uri.info.GetEntitySetUriInfo;
 import org.apache.olingo.odata2.api.uri.info.PostUriInfo;
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPADefaultProcessor;
+import org.apache.olingo.odata2.jpa.processor.api.ODataJPAProcessor;
+import org.apache.olingo.odata2.jpa.processor.api.access.JPAProcessor;
+import org.apache.olingo.odata2.jpa.processor.api.exception.ODataJPARuntimeException;
+import org.apache.olingo.odata2.jpa.processor.api.factory.ODataJPAFactory;
 import org.apache.olingo.odata2.jpa.processor.core.ODataJPAResponseBuilderDefault;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sap.holidayapp.config.SpringApplicationContext;
+import com.sap.holidayapp.model.HolidayDetail;
 import com.sap.holidayapp.model.HolidayHeader;
-import com.sap.icd.odatav2.spring.config.AbstractODataProcessor;
-import com.sap.icd.odatav2.spring.config.StandardODataJPAProcessor;
 
 @Primary
 @Component
-public class HolidayProcessor extends AbstractODataProcessor {
-  @Autowired
+@RequestScope
+public class HolidayProcessor extends ODataJPADefaultProcessor {
+
   private ODataJPAContext oDataJpaContext;
 
-  private HolidayService holidayService;
-
-  public HolidayProcessor(StandardODataJPAProcessor standardODataJPAProcessor,
-      HolidayService holidayService) {
-    super(standardODataJPAProcessor);
-    this.oDataJpaContext = oDataJpaContext;
-    this.holidayService = holidayService;
+  @Autowired
+  public HolidayProcessor(ODataJPAContext oDataJPAContext) {
+    super(oDataJPAContext);
+    oDataJpaContext = oDataJPAContext;
   }
 
   @Override
   public ODataResponse readEntitySet(GetEntitySetUriInfo uriInfo, String contentType)
       throws ODataException {
     oDataJpaContext.setODataContext(getContext());
-    return super.readEntitySet(uriInfo, contentType);
+    ODataJPAProcessor oDataJPAProcessor = (ODataJPAProcessor) this;
+
+    JPAProcessor jpaProcessor = ODataJPAFactory.createFactory().getJPAAccessFactory()
+        .getJPAProcessor(oDataJPAProcessor.getOdataJPAContext());
+
+    EntityManager entityManager = oDataJPAContext.getEntityManager();
+    if (!entityManager.getTransaction().isActive())
+      entityManager.getTransaction().begin();
+    oDataJPAContext.setEntityManager(entityManager);
+    List<Object> result = new ArrayList<>();
+
+    String entityName = uriInfo.getTargetType().getName();
+    if (entityName.equals("HolidayHeader")) {
+      List<HolidayHeader> holidayHeaderList = jpaProcessor.process(uriInfo);
+      result.addAll(holidayHeaderList);
+    } else if (entityName.equals("HolidayDetail")) {
+      List<HolidayDetail> holidayDetailList = jpaProcessor.process(uriInfo);
+      // List<HolidayDetail> holidayDetailList = this.detailRepository.findAll();
+      result.addAll(holidayDetailList);
+    }
+
+    ODataJPAResponseBuilderDefault responseBuilder =
+        new ODataJPAResponseBuilderDefault(oDataJPAContext);
+
+    try {
+      return responseBuilder.build(uriInfo, result, contentType);
+    } catch (ODataJPARuntimeException e) {
+      throw new ODataException(e);
+    }
   }
 
   @Override
@@ -58,7 +93,9 @@ public class HolidayProcessor extends AbstractODataProcessor {
       case "HolidayHeader":
         HolidayHeader holidayHeader =
             (HolidayHeader) this.getPojo(content, new TypeReference<HolidayHeader>() {});
-        returnObject = this.holidayService.createHolidayData(holidayHeader, oDataJpaContext);
+
+        returnObject = SpringApplicationContext.getBean(HolidayService.class)
+            .createHolidayData(holidayHeader, oDataJpaContext);
         break;
       default:
         break;

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import org.eclipse.persistence.annotations.UuidGenerator;
 import org.hibernate.annotations.GenericGenerator;
@@ -19,6 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "T_HOLIDAY_DETAIL")
+@NamedQuery(name = "HolidayDetail.findAll", query = "SELECT s FROM HolidayDetail s")
 public class HolidayDetail implements Serializable {
 
   /**
