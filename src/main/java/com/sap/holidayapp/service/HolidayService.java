@@ -16,13 +16,13 @@ import com.sap.holidayapp.repository.HolidayHeaderRepository;
 public class HolidayService {
 
   private HolidayHeaderRepository headerRepository;
-  private HolidayDetailRepository detailRepository;
+//  private HolidayDetailRepository detailRepository;
   
   @Autowired
-  public HolidayService(HolidayHeaderRepository headerRepository, HolidayDetailRepository detailRepository) {
+  public HolidayService(HolidayHeaderRepository headerRepository) {
     super();
     this.headerRepository = headerRepository;
-    this.detailRepository = detailRepository;
+//    this.detailRepository = detailRepository;
   }
 
   public HolidayHeader createHolidayData(HolidayHeader holidayHeader,

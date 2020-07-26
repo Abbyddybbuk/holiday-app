@@ -1,0 +1,25 @@
+spring.jpa.show-sql: true
+spring.jpa.generate-ddl: false
+spring.datasource.initialize: false
+spring.jpa.hibernate.ddl-auto: update
+spring.jpa.hibernate.naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
+spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.HANAColumnStoreDialect
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+
+com.sap.icd.odatav2.spring:
+   servicePath: holidayapp
+   persistenceUnit: holiday-app
+   language: en
+   country: US
+   
+com.sap.icd.mt.enabled: true
+
+---
+spring:
+  profiles: cloud
+  datasource:
+    url: jdbc:sap://zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com:21022?encrypt=true&validateCertificate=true&currentschema=USR_8Z0GFE1VA6ZOOQXP72DOACAIA
+    username: USR_8Z0GFE1VA6ZOOQXP72DOACAIA
+    password: Qt7P3LSZbnUVhQ4fiYSHvImnbX5BEljs-83qqiy7m0KJ2.Mj_JSynYbria8RJkzxJi4MqpvjRTcyYiW0EsfIHwftMITk8dfze-mBotdtL0PkZzfqJxMaroLmm3og4NnY
+    driver-class-name: com.sap.db.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource

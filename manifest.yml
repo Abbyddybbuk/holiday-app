@@ -1,0 +1,9 @@
+---
+applications:
+- name: holiday-app
+  path: \target\holiday-app-0.0.1-SNAPSHOT.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  memory: 1G  
+  services:
+  - hana-db1
+  - Holiday-Hana-Db-hana
