@@ -50,7 +50,7 @@ public class CloudDbConfig extends AbstractCloudConfig {
         //env.getProperty(VCAP_SERVICES + hanaInstanceName + ".credentials.password", "");
     logger.info(password);
     DataSource dataSource = null;
-    dataSource = DataSourceBuilder.create()//.driverClassName(com.sap.db.jdbc.Driver.get)
+    dataSource = DataSourceBuilder.create()
         .type(com.zaxxer.hikari.HikariDataSource.class).url(url).username(user).password(password)
         .build();
     return dataSource;
