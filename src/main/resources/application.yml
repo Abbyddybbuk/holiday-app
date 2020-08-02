@@ -4,3 +4,5 @@ management:
   context-path: /admin
   security:
     enabled: false
+    
+LEAVE_APPROVAL_URL: http://localhost:8089/sap/leavecreatehystrix   
