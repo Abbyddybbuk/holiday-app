@@ -13,8 +13,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Component
 public class CorrelationInterceptor extends HandlerInterceptorAdapter {
 
-	private static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
-	private static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
+	public static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
+	public static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
 
 	@Override
 	public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler)
