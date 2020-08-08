@@ -11,12 +11,14 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile({ "default" })
 public class LocalRabbitConfig {
-	public static final String HOLIDAY_QUEUE_NAME = "HOLIDAY_REQUEST";
+	public static final String HOLIDAY_QUEUE_NAME = "HOLIDAY_REQUEST"
+			+ "";
 
 	@Bean
 	public ConnectionFactory rabbitMQConnectionFactory(@Value("${spring.rabbitmq.host}") String host,
@@ -36,7 +38,7 @@ public class LocalRabbitConfig {
 		return rabbitAdmin;
 	}
 
-	@Bean
+	@Bean("rabbitTemplateCustom")
 	public AmqpTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
 		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
 		rabbitTemplate.setMandatory(true);
