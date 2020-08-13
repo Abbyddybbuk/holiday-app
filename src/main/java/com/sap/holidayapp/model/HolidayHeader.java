@@ -30,6 +30,7 @@ public class HolidayHeader implements Serializable {
 	/**
 	 * 
 	 */
+
 	private static final long serialVersionUID = 4628308265794999918L;
 
 	@Id

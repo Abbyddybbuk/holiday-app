@@ -4,7 +4,11 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.olingo.odata2.jpa.processor.api.ODataJPAContext;
+import org.jboss.logging.MDC;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,19 +22,22 @@ import com.sap.holidayapp.repository.HolidayHeaderRepository;
 
 @Service
 public class HolidayService {
-
+	@Autowired 
+	private HttpServletRequest request;
+	
 	private HolidayHeaderRepository headerRepository;
 	private HolidayDetailRepository detailRepository;
-
+    private CorrelationInterceptor correlationInterceptor;
 	@Autowired
 	@Qualifier("rabbitTemplateCustom")
 	private AmqpTemplate rabbitTemplate;
 
 	@Autowired
-	public HolidayService(HolidayHeaderRepository headerRepository, HolidayDetailRepository detailRepository) {
+	public HolidayService(HolidayHeaderRepository headerRepository, HolidayDetailRepository detailRepository, CorrelationInterceptor correlationInterceptor) {
 		super();
 		this.headerRepository = headerRepository;
 		this.detailRepository = detailRepository;
+		this.correlationInterceptor = correlationInterceptor;
 	}
 
 	public HolidayHeader createHolidayData(HolidayHeader holidayHeader, ODataJPAContext oDataJPAContext) {
@@ -50,8 +57,13 @@ public class HolidayService {
 		return this.headerRepository.save(holidayHeader);
 	}
 
-	public String triggerApprovalviaRabbit(String month) {
+	public String triggerApprovalviaRabbit(String month) throws Exception {
 		List<HolidayDetail> holidayDetail = this.detailRepository.findByMonth(month);
+		this.correlationInterceptor.preHandle(request, null, null);
+
+		if (holidayDetail.isEmpty()) {
+			return "No data found";
+		}
 		new HolidayApprovalRabbit(rabbitTemplate, holidayDetail).queue();
 		return "triggered";
 	}

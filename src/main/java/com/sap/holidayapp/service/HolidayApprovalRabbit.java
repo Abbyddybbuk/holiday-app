@@ -51,7 +51,8 @@ public class HolidayApprovalRabbit extends HystrixCommand<String> {
 
 	@Override
 	protected String getFallback() {
-		this.logger.error("Failure to send message to statistics service");
-		return "Failed to trigger the queue";
+		this.logger.error("Failure to send message to approval service" + this.getExecutionEvents());
+		this.logger.error(getFailedExecutionException().getMessage());
+		return this.getFailedExecutionException().getMessage();
 	}
 }
